@@ -1,0 +1,17 @@
+This folder contains c++ code for inference of IBD along the genome assuming no LD and that allele frequencies are known (LocalNgsRelate):
+
+Comparison to Relate (Albrecthsen et al. 2009):
+Note that the program  can be seen as a low-depth NGS version of the program Relate (Albrecthsen et al. 2009) except that it does not allow for the presence of LD. It has been changed to handle low-depth NGS data by instead of assuming genotypes are available and allow a fixed error rate shared across all sites it takes genotype likelihood as input and via these take site specific genotype uncertainty into account.
+
+File overview:
+filehandlingfunctions: functions for reading in input data and handling files in general
+analysisfunctions:     functions for HMM inference  
+bfgs:                  functions for optimization
+localngsrelate:        main function that reads in program options and runs the inference according to those
+
+How to compile:
+Simply run the command make from the command line in this folder
+
+How to run:
+type ./localngsrelate for options
+
