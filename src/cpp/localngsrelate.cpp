@@ -235,33 +235,36 @@ int main(int argc, char **argv){
 
   // Check if user provided values are valid
   if((ca.p.k0>-1)||(ca.p.k1>-1)||(ca.p.k2>-1)){
-    if(((ca.p.k0<0)||(ca.p.k1<0)||(ca.p.k2<0))&ca.fixk2to0==0){
+    if(((ca.p.k0<0)||(ca.p.k1<0)||(ca.p.k2<0))&&ca.fixk2to0==0){
       fprintf(stderr,"\n\t## Error: -k0, -k1 and -k2 must all be specified together, values have to be non-negative and sum to 1 (perhaps consider --fixk2to0)\n");
       stop=true;
     }else{
     double sumoffixed = 0;
-    if(ca.p.k0>0)
+    if(ca.p.k0>0){
       if(ca.p.k0>1){
 	fprintf(stderr,"\n\t## Error: provided k0 value was above 1 (%f)\n",ca.p.k0);
 	stop=true;
       }else{
 	sumoffixed+=ca.p.k0;
       }
-    if(ca.p.k1>0)
+    }
+    if(ca.p.k1>0){
       if(ca.p.k1>1){
 	fprintf(stderr,"\n\t## Error: provided k1 value was above 1 (%f)\n",ca.p.k1);
 	stop=true;
       }else{
 	sumoffixed+=ca.p.k1;
       }
-    if(ca.p.k2>0)
+    }
+    if(ca.p.k2>0){
       if(ca.p.k2>1){
 	fprintf(stderr,"\n\t## Error: provided k2 value was above 1 (%f)\n",ca.p.k2);
 	stop=true;
       }else{
 	sumoffixed+=ca.p.k2;
       }
-    if((sumoffixed!=1)&ca.fixk2to0==0){
+    }
+    if((sumoffixed!=1)&&ca.fixk2to0==0){
       fprintf(stderr,"\n\t## Error: provided k values do not sum to 1\n");
       stop=true;
     }
