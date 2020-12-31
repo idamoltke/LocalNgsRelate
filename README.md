@@ -203,7 +203,8 @@ Plots for all chromosomes (ind 2 and 3):
 http://popgen.dk/ida/LocalNgsRelate/exampleoutput_ind2_ind3_posteriorandviterbi_allchrs.pdf
 
 
-##Citing and references
+## Citing and references
 For questions contact: ida@binf.ku.dk
+
 If you use the program in a publication please cite: xxx
 
