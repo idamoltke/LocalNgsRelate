@@ -196,8 +196,11 @@ graphics.off()
 ```
 The results can be seen in here:
 
-Plots for chromosome 2 (ind 3 and 4): 
+Plots for chromosome 2 (ind 3 and 4):  
+http://popgen.dk/ida/LocalNgsRelate/exampleoutput_ind3_ind4_posteriorandviterbi_chr2.pdf
+
 Plots for all chromosomes (ind 2 and 3):  
+http://popgen.dk/ida/LocalNgsRelate/exampleoutput_ind2_ind3_posteriorandviterbi_allchrs.pdf
 
 
 ##Citing and references
