@@ -12,15 +12,15 @@ cd LocalNgsRelate/src/cpp/;make
 ```
 
 ## Help and run options
-To see how the program can be run and to see all options, you can type the follwoing in the folder where the src code is:
+To see how the program can be run and to see all options, you can type the following command in the folder where the src code is:
 
 ```
 ./localngsrelate 
 ```
-Or from a different folder with full path to the src code folder
+Or from a different folder with full path "path/" to the src code folder
 
 ```
-$path/localngsrelate 
+path/localngsrelate 
 ```
 
 ## Input file format
@@ -47,10 +47,10 @@ Among the LWK individuals there at least 4 pairs of relatives:
 |   3   |  4    | "NA19331" | "NA19334"       | Full siblings |
 |   5   |  6    | "NA19451" | "NA19452"       | First cousins |
 
-For a description of how this dataset was made see xxx.
+For a description of how this dataset was made see "Making input data" below.
 
 ## Output format
-Successfully running the program should lead to 3 output files and if run with "–o exampleoutput" thee will be called
+Successfully running the program should lead to 3 output files and if run the program with "–o exampleoutput" these will be called
 
 1) exampleoutput.log
 2) exampleoutput.parameters
@@ -75,7 +75,34 @@ If you as shown below run the program with “2>&1 | tee exampleoutput.fulllog�
 ## Run examples
 
 ### Making input data
-NB We here give the commands for how the data in the folder exampledata was made so you can skip this part if you just want to see how to run LocalNgsRelate).
+NB We describe how the data in the folder exampledata was made as an example of how input data to LocalNgsRelate can be made. Running the commands your self will take som time so feel free to skip that and simply jump to the description of how to run LocalNgsRelate below.
+
+To make the example input files in exampldata we first downloaded bamfiles for 101 LWK samples sequenced to about 6x as follows:
+
+xxx
+
+Then we ran the program ANGSD to get a genotype likelihood files as well as frequency estimates:
+
+```
+.ANGSD -b LWK.bamlist -GL 1 -doMajorMinor 3 -doMaf 1 -sites LWK.sites -rf LWK.chrs -out LWK -minMapQ 30 -minQ 20 -P 4
+```
+
+In that command: 
+
+1) LWK.bamlist is a file that contains a line for each bamfile and this line contains the full path of the given bamfile on your system
+
+2) LWK.sites contains a line for each site to include in the dataset and this line contains 4 pieces of information tab separated, namely chromosome number, position, major allele and minor allele. Note that this needs to be indexed by ANGSD for details see http://www.popgen.dk/angsd/index.php/Sites     
+
+3) LWK.chr contains a line for each chromosome the sites file have sites on. So if the sites file contains sites on all 22 autosomes it will contain 22 lines, one for each chromosome. 
+
+For details on what the different options in ANGSD mean see http://www.popgen.dk/angsd/index.php/Genotype_Likelihoods and http://www.popgen.dk/angsd/index.php/Allele_Frequencies. 
+
+The above command will create a file LWK.beagle.gz and a file LWK.mafs.gz. The first one contains genotype likelihoods and is in exactly the format that is needed for LocalNgsRelate. The other one, which contains allele frequencies, needs to be altered a bit to work as an input file for LocalNgsRelate. But all we did to make the final input file fromit was to run the following command:
+
+```
+zcat LWK.mafs.gz | cut -f5 |sed 1d > LWK.freq
+```
+
 
 ###	Analysing selected pairs
 Let’s here try to infer IBD tracks for a few pairs of individuals in the example dataset. We can do this from the command line by first creating a folder for the results and moving into this folder (from the folder called src):
@@ -167,7 +194,11 @@ plot.localngsrelate.viterbi(res)
 graphics.off()               
 
 ```
-The results can be seen in these files: xxx
+The results can be seen in here:
+
+Plots for chromosome 2 (ind 3 and 4): 
+Plots for all chromosomes (ind 2 and 3):  
+
 
 ##Citing and references
 For questions contact: ida@binf.ku.dk
