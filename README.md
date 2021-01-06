@@ -84,7 +84,7 @@ xxx
 Then we ran the program ANGSD to get a genotype likelihood files as well as frequency estimates:
 
 ```
-.ANGSD -b LWK.bamlist -GL 1 -doMajorMinor 3 -doMaf 1 -sites LWK.sites -rf LWK.chrs -out LWK -minMapQ 30 -minQ 20 -P 4
+./ANGSD -b LWK.bamlist -GL 1 -doMajorMinor 3 -doMaf 1 -sites LWK.sites -rf LWK.chrs -out LWK -minMapQ 30 -minQ 20 -P 4
 ```
 
 In that command: 
