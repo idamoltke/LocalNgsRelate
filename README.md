@@ -77,9 +77,11 @@ If you as shown below run the program with “2>&1 | tee exampleoutput.fulllog�
 ### Making input data
 NB We describe how the data in the folder exampledata was made as an example of how input data to LocalNgsRelate can be made. Running the commands your self will take som time so feel free to skip that and simply jump to the description of how to run LocalNgsRelate below.
 
-To make the example input files in exampldata we first downloaded bamfiles for 101 LWK samples sequenced to about 6x as follows:
+To make the example input files in exampldata we first downloaded bamfiles for 101 LWK samples sequenced to about 6x from here:
 
-xxx
+```
+ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase3/data/
+```
 
 Then we ran the program ANGSD to get a genotype likelihood files as well as frequency estimates:
 
@@ -115,16 +117,16 @@ cd ../../exampleruns
 And then we can run the following commands to analyse the 4 listed related pairs (see “Example input files”):
 
 ```
-## Analysing the half sib pair 
+## Analyse the half sib pair 
 ../src/cpp/localngsrelate -a 0 -b 1 -gbeagle ../exampledata/LWK -f ../exampledata/LWK.freq -n 101 -fixk2to0 1 -O exampleoutput_ind0_ind1 2>&1 | tee exampleoutput_ind0_ind1.fulllog
 
-## Analysing the parent offspring pair
+## Analyse the parent offspring pair
 ../src/cpp/localngsrelate -a 2 -b 3 -gbeagle ../exampledata/LWK -f ../exampledata/LWK.freq -n 101 -fixk2to0 1 -O exampleoutput_ind2_ind3 2>&1 | tee exampleoutput_ind2_ind3.fulllog
 
-## Analysing the first cousin pair 
+## Analyse the first cousin pair 
 ../src/cpp/localngsrelate -a 5 -b 6 -gbeagle ../exampledata/LWK -f ../exampledata/LWK.freq -n 101 -fixk2to0 1 -O exampleoutput_ind5_ind6 2>&1 | tee exampleoutput_ind5_ind6.fulllog
 
-## Analysing the full sib pair  
+## Analyse the full sib pair  
 ../src/cpp/localngsrelate -a 3 -b 4 -gbeagle ../exampledata/LWK -f ../exampledata/LWK.freq -n 101 -O exampleoutput_ind3_ind4 2>&1 | tee exampleoutput_ind3_ind4.fulllog
 ```
 
