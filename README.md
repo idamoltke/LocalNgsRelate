@@ -115,9 +115,16 @@ cd ../../exampleruns
 And then we can run the following commands to analyse the 4 listed related pairs (see “Example input files”):
 
 ```
+## Analysing the half sib pair 
 ../src/cpp/localngsrelate -a 0 -b 1 -gbeagle ../exampledata/LWK -f ../exampledata/LWK.freq -n 101 -fixk2to0 1 -O exampleoutput_ind0_ind1 2>&1 | tee exampleoutput_ind0_ind1.fulllog
+
+## Analysing the parent offspring pair
 ../src/cpp/localngsrelate -a 2 -b 3 -gbeagle ../exampledata/LWK -f ../exampledata/LWK.freq -n 101 -fixk2to0 1 -O exampleoutput_ind2_ind3 2>&1 | tee exampleoutput_ind2_ind3.fulllog
+
+## Analysing the first cousin pair 
 ../src/cpp/localngsrelate -a 5 -b 6 -gbeagle ../exampledata/LWK -f ../exampledata/LWK.freq -n 101 -fixk2to0 1 -O exampleoutput_ind5_ind6 2>&1 | tee exampleoutput_ind5_ind6.fulllog
+
+## Analysing the full sib pair  
 ../src/cpp/localngsrelate -a 3 -b 4 -gbeagle ../exampledata/LWK -f ../exampledata/LWK.freq -n 101 -O exampleoutput_ind3_ind4 2>&1 | tee exampleoutput_ind3_ind4.fulllog
 ```
 
@@ -163,7 +170,7 @@ As can be seen the top 5 log likelihoods differ very little suggesting that conv
 We can plot the final results opening R and using a script in the folder src/scripts called plotLocalNgsRelateOutput.R. E.g. we can plot the results for the full sibling pair on chromosome 2 as follows:
 
 
-# Read in plotting script
+## Read in plotting script
 source("../src/scripts/plotLocalNgsRelateOutput.R")
 
 ## Read in results        
