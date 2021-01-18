@@ -17,10 +17,10 @@ To see how the program can be run and to see all options, you can type the follo
 ```
 ./localngsrelate 
 ```
-Or from a different folder with full path "path/" to the src code folder
+Or from a different folder with full path, e.g.: 
 
 ```
-path/localngsrelate 
+/home/ida/Programs/LocalNgsRelate/src/cpp/localngsrelate ## Replace with the path to the program on your computer!
 ```
 
 ## Input file format
@@ -107,27 +107,31 @@ zcat LWK.mafs.gz | cut -f5 |sed 1d > LWK.freq
 
 
 ###	Analysing selected pairs
-Let’s here try to infer IBD tracks for a few pairs of individuals in the example dataset. We can do this from the command line by first creating a folder for the results and moving into this folder (from the folder called src):
+Let’s here try to infer IBD tracks for a few pairs of individuals in the example dataset. We can do this from the command line by first creating a folder for the results where you want it on you compute and moving into this folder:
 
 ```
-mkdir ../../exampleruns
-cd ../../exampleruns
+mkdir exampleruns
+cd exampleruns
 ```
 
 And then we can run the following commands to analyse the 4 listed related pairs (see “Example input files”):
 
 ```
+## Set paths to the program folder  
+## NB. replace with the path on your own computer! 
+localngsrelatefolder="/home/ida/Programs/LocalNgsRelate/"
+
 ## Analyse the half sib pair 
-../src/cpp/localngsrelate -a 0 -b 1 -gbeagle ../exampledata/LWK -f ../exampledata/LWK.freq -n 101 -fixk2to0 1 -O exampleoutput_ind0_ind1 2>&1 | tee exampleoutput_ind0_ind1.fulllog
+$localngsrelatefolder/src/cpp/localngsrelate -a 0 -b 1 -gbeagle $localngsrelatefolder/exampledata/LWK -f $localngsrelatefolder/exampledata/LWK.freq -n 101 -fixk2to0 1 -O exampleoutput_ind0_ind1 2>&1 | tee exampleoutput_ind0_ind1.fulllog
 
 ## Analyse the parent offspring pair
-../src/cpp/localngsrelate -a 2 -b 3 -gbeagle ../exampledata/LWK -f ../exampledata/LWK.freq -n 101 -fixk2to0 1 -O exampleoutput_ind2_ind3 2>&1 | tee exampleoutput_ind2_ind3.fulllog
+$localngsrelatefolder/src/cpp/localngsrelate -a 2 -b 3 -gbeagle $localngsrelatefolder/exampledata/LWK -f $localngsrelatefolder/exampledata/LWK.freq -n 101 -fixk2to0 1 -O exampleoutput_ind2_ind3 2>&1 | tee exampleoutput_ind2_ind3.fulllog
 
 ## Analyse the first cousin pair 
-../src/cpp/localngsrelate -a 5 -b 6 -gbeagle ../exampledata/LWK -f ../exampledata/LWK.freq -n 101 -fixk2to0 1 -O exampleoutput_ind5_ind6 2>&1 | tee exampleoutput_ind5_ind6.fulllog
+$localngsrelatefolder/src/cpp/localngsrelate -a 5 -b 6 -gbeagle $localngsrelatefolder/exampledata/LWK -f $localngsrelatefolder/exampledata/LWK.freq -n 101 -fixk2to0 1 -O exampleoutput_ind5_ind6 2>&1 | tee exampleoutput_ind5_ind6.fulllog
 
 ## Analyse the full sib pair  
-../src/cpp/localngsrelate -a 3 -b 4 -gbeagle ../exampledata/LWK -f ../exampledata/LWK.freq -n 101 -O exampleoutput_ind3_ind4 2>&1 | tee exampleoutput_ind3_ind4.fulllog
+$localngsrelatefolder/src/cpp/localngsrelate -a 3 -b 4 -gbeagle $localngsrelatefolder/exampledata/LWK -f $localngsrelatefolder/exampledata/LWK.freq -n 101 -O exampleoutput_ind3_ind4 2>&1 | tee exampleoutput_ind3_ind4.fulllog
 ```
 
 Note that we here specify the input files with –gbeagle and –f, the number of individuals in the data with –n and the output name prefix with the option –O. Also, note that we are here running the program with default values except for in the first 3 runs where we set the option -fixk2to0 1 since we only expect k2 to be above 0 for full siblings or twins. Finally note that we ended each command line with “2>&1 | tee exampleoutput_indx_indy.fulllog” where x and y are the indices of the analysed individuals. This produces a long log file which can be used to assess convergence (see below for how).
@@ -137,7 +141,7 @@ Note that we here specify the input files with –gbeagle and –f, the number o
 If you ran the program as above with “2>&1 | tee exampleoutput_indx_indy.fulllog” you can use the script getlikes.sh in the folder src/scripts like this. E.g. for for individuals 0 and 1 we can run the command:
  
 ```
-../src/scripts/getlikes.sh exampleoutput_ind0_ind1.fulllog 
+$localngsrelatefolder/src/scripts/getlikes.sh exampleoutput_ind0_ind1.fulllog 
 ```
 
 This should produce a sorted list of log likelihoods for the 20 rounds of optimization that was run (20 is the default number) like this:
@@ -172,8 +176,9 @@ As can be seen the top 5 log likelihoods differ very little suggesting that conv
 We can plot the final results opening R and using a script in the folder src/scripts called plotLocalNgsRelateOutput.R. E.g. we can plot the results for the full sibling pair on chromosome 2 as follows:
 
 
-## Read in plotting script
-source("../src/scripts/plotLocalNgsRelateOutput.R")
+## Read in plotting script. NB. replace with the path to the folder with localngsrelate  
+localngsrelatefolder="/home/ida/Programs/LocalNgsRelate/"
+source(paste(localngsrelatefolder,"/src/scripts/plotLocalNgsRelateOutput.R",sep=""))
 
 ## Read in results        
 nam = "exampleoutput_ind3_ind4"                                                 
@@ -189,8 +194,9 @@ graphics.off()
 Or the results for the parent offspring pair on all chromosomes 
 
 ```
-## Read in plotting script
-source("../src/scripts/plotLocalNgsRelateOutput.R")
+## Read in plotting script. NB. replace with the path to the folder with localngsrelate  
+localngsrelatefolder="/home/ida/Programs/LocalNgsRelate/"
+source(paste(localngsrelatefolder,"/src/scripts/plotLocalNgsRelateOutput.R",sep=""))
 
 ## Read in results        
 nam = "exampleoutput_ind2_ind3"                                                 
