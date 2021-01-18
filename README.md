@@ -44,8 +44,8 @@ Among the LWK individuals there at least 4 pairs of relatives:
 | ------------ | ------------ | ------------ | ------------------------ | :------------- | 
 |   0   |       1    | "NA19027" | "NA19042"       | Half-sibs |
 |   2   |  3    | "NA19313" | "NA19331"       | Parent-offspring |
-|   3   |  4    | "NA19331" | "NA19334"       | Full siblings |
 |   5   |  6    | "NA19451" | "NA19452"       | First cousins |
+|   3   |  4    | "NA19331" | "NA19334"       | Full siblings |
 
 For a description of how this dataset was made see "Making input data" below.
 
