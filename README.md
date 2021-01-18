@@ -20,7 +20,7 @@ To see how the program can be run and to see all options, you can type the follo
 Or from a different folder with full path, e.g.: 
 
 ```
-/home/ida/Programs/LocalNgsRelate/src/cpp/localngsrelate ## Replace with the path to the program on your computer!
+/home/ida/Programs/LocalNgsRelate/src/cpp/localngsrelate ## NB. Replace with the path to the program on your computer!
 ```
 
 ## Input file format
