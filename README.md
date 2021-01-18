@@ -117,8 +117,7 @@ cd exampleruns
 And then we can run the following commands to analyse the 4 listed related pairs (see “Example input files”):
 
 ```
-## Set paths to the program folder  
-## NB. replace with the path on your own computer! 
+## Set path to the program folder. NB. replace with the path on your own computer! 
 localngsrelatefolder="/home/ida/Programs/LocalNgsRelate/"
 
 ## Analyse the half sib pair 
@@ -174,7 +173,6 @@ As can be seen the top 5 log likelihoods differ very little suggesting that conv
 ```
 ### Plotting the results
 We can plot the final results opening R and using a script in the folder src/scripts called plotLocalNgsRelateOutput.R. E.g. we can plot the results for the full sibling pair on chromosome 2 as follows:
-
 
 ## Read in plotting script. NB. replace with the path to the folder with localngsrelate  
 localngsrelatefolder="/home/ida/Programs/LocalNgsRelate/"
