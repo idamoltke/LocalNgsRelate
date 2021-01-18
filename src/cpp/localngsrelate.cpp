@@ -44,14 +44,14 @@ void print_info(FILE *fp){
   fprintf(fp, "   -calcA     <INT>         Calculate the parameter a instead of estimating it (if set to 1, default is 0)\n");
   fprintf(fp, "   -fixA      <FLOAT>       Set parameter a (rate of change between IBD states) to this value. NB only works when k0, k1 and k2 are also provided\n"); 
   fprintf(fp, "   -minA      <FLOAT>       Set lower limit to parameter a (default 0.001). NB. it has to be > 0\n");
-  fprintf(fp, "   -maxA      <FLOAT>       Set upper limit to parameter a (default 0.15)\n");
+  fprintf(fp, "   -maxA      <FLOAT>       Set upper limit to parameter a (default 0.1)\n");
   fprintf(fp, "   -k0        <FLOAT>       Set k0 to this value (must be used with -k1 and -k2)\n");
   fprintf(fp, "   -k1        <FLOAT>       Set k1 to this value (must be used with -k0 and -k2)\n");
   fprintf(fp, "   -k2        <FLOAT>       Set k2 to this value (must be used with -k0 and -k1)\n");
   fprintf(fp, "   -fixk2to0  <INT>         Set k2 to 0 and estimate only k0 and k1\n");
   fprintf(fp, "   -l         <INT>         minor allele frequency filter (default 0.05)\n");
   fprintf(fp, "   -s         <INT>         Should you swich the freq with 1-freq? (default 0)\n");
-  fprintf(fp, "   -r         <FLOAT>       Seed for rand (default 0)\n");
+  fprintf(fp, "   -r         <FLOAT>       Seed for rand (default 20)\n");
   fprintf(fp, "   -N         <INT>         Number of times to start parameter estimation for each pair with random seed (default 1)\n");
   fprintf(fp, "   -O         <fileprefix>  Prefix for name of outputfiles\n");
   fprintf(fp, "\n");
