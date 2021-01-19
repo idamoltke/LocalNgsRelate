@@ -61,7 +61,7 @@ The .parameter file contains the obtained ML extimates of a, k0, k1 and k2 follo
 The IBDtractinference.gz file contains the IBD tract inference results in the following format
 
 ```
-Chr     Pos     Freq    Viterbi Post0   Post1   Post2
+Chr     Pos     Freq            Viterbi Post0                   Post1                   Post2
 1       723918  0.151610        1       3.0884985926685819e-02  9.6911501407414691e-01  0.0000000000000000e+00
 1       757691  0.122070        1       2.9787120630633119e-02  9.7021287937161715e-01  0.0000000000000000e+00
 1       779322  0.474770        1       2.9543971384025283e-02  9.7045602861803226e-01  0.0000000000000000e+00
