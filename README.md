@@ -149,29 +149,29 @@ $localngsrelatefolder/src/scripts/getlikes.sh exampleoutput_ind0_ind1.fulllog
 This should produce a sorted list of log likelihoods for the 20 rounds of optimization that was run (20 is the default number) like this:
 
 ```
-17	-178820.6488210122624878
-13	-178820.6488210122915916
-7	-178820.6488210122915916
-16	-178820.6488210123206954
-12	-178820.6488210123497993
-19	-178820.6488210123497993
-8	-178820.6488210123497993
-15	-178820.6488210123789031
-0	-178820.6488210124080069
-3	-178820.6488210124080069
-6	-178820.6488210124080069
-10	-178820.6488210124371108
-14	-178820.6488210124371108
-18	-178820.6488210124371108
-2	-178820.6488210124371108
-11	-178820.6488210124662146
-1	-178820.6488210124662146
-5	-178820.6488210124662146
-9	-178820.6488210124953184
-4	-178820.6488210125535261
+6	-201338.8335366386163514
+13	-201338.8335366389364935
+11	-201338.8335366390238050
+14	-201338.8335366393439472
+7	-201338.8335366394894663
+8	-201338.8335366395476740
+18	-201338.8335366434475873
+17	-201338.8335366445244290
+15	-201338.8335366518585943
+2	-201338.8335366620740388
+3	-201338.8335366707469802
+12	-201338.8335366802930366
+16	-201338.8335366958635859
+5	-201338.8335367221443448
+9	-201338.8335368037223816
+1	-201338.8335368797124829
+0	-201338.8335368825064506
+19	-201338.8335369107953738
+4	-201338.8335372715082485
+10	-201338.8335522015695460
 ```
 
-As can be seen the top 5 log likelihoods differ very little suggesting that convergence was likely reached (and thus the maximum likelihood solution was found by the program). If this had not beent he case you might consider rerunning the program with a higher number of optimization rounds, say 100 (by rerunning the same command as above but with “–N 100” added).
+As can be seen the top 5 log likelihoods differ very little suggesting that convergence was likely reached (and thus the maximum likelihood solution was found by the program). If this had not been the case, you should consider rerunning the program with a higher number of optimization rounds, say 100 (by rerunning the same command as above but with “–N 100” added).
 
 ```
 ### Plotting the results
