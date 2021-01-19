@@ -173,10 +173,10 @@ This should produce a sorted list of log likelihoods for the 20 rounds of optimi
 
 As can be seen the top 5 log likelihoods differ very little suggesting that convergence was likely reached (and thus the maximum likelihood solution was found by the program). If this had not been the case, you should consider rerunning the program with a higher number of optimization rounds, say 100 (by rerunning the same command as above but with “–N 100” added).
 
-```
 ### Plotting the results
-We can plot the final results opening R and using a script in the folder src/scripts called plotLocalNgsRelateOutput.R. E.g. we can plot the results for the full sibling pair on chromosome 2 as follows:
+We can plot the final results by opening R and using the script in the folder src/scripts called plotLocalNgsRelateOutput.R. E.g. we can plot the results for the full sibling pair on chromosome 2 as follows:
 
+```
 ## Read in plotting script. NB. replace with the path to the folder with localngsrelate  
 localngsrelatefolder="/home/ida/Programs/LocalNgsRelate/"
 source(paste(localngsrelatefolder,"/src/scripts/plotLocalNgsRelateOutput.R",sep=""))
