@@ -58,15 +58,15 @@ Successfully running the program should lead to 3 output files and if run the pr
 
 The .log file just logs the command called.
 The .parameter file contains the obtained ML extimates of a, k0, k1 and k2 followed by the log likelihood for those parameter values.
-The IBDtractinference.gs file contains the IBD tract inference results of the following format
+The IBDtractinference.gz file contains the IBD tract inference results in the following format
 
 ```
-Chr     Pos     Freq            Viterbi Post0                   Post1                    Post2
-1       30860   0.184148        1       4.7034837882467595e-01  5.2965162117352105e-01  0.0000000000000000e+00
-1       52238   0.362546        1       4.6995311651972155e-01  5.3004688347834739e-01  0.0000000000000000e+00
-1       73822   0.058160        1       4.6941249114032702e-01  5.3058750885676254e-01  0.0000000000000000e+00
-1       94986   0.073169        1       4.6888250067835235e-01  5.3111749931621532e-01  0.0000000000000000e+00
-1       118617  0.318185        1       4.6829086584325724e-01  5.3170913415127108e-01  0.0000000000000000e+00
+Chr     Pos     Freq    Viterbi Post0   Post1   Post2
+1       723918  0.151610        1       3.0884985926685819e-02  9.6911501407414691e-01  0.0000000000000000e+00
+1       757691  0.122070        1       2.9787120630633119e-02  9.7021287937161715e-01  0.0000000000000000e+00
+1       779322  0.474770        1       2.9543971384025283e-02  9.7045602861803226e-01  0.0000000000000000e+00
+1       798959  0.259580        1       2.9304343678521146e-02  9.7069565632360233e-01  0.0000000000000000e+00
+1       800007  0.089113        1       2.9302268977282993e-02  9.7069773102524970e-01  0.0000000000000000e+00
 ```
 
 If you - as shown in the run examples below - run the program with “2>&1 | tee exampleoutput.fulllog” added to the end of your command your will get an additional output file (exampleoutput.fulllog), which contains everything that would otherwise be written to the screen. This can be helpful if you want to assess convergence (for details about this see “Run examples” below). To get this to work you need the program tee installed.
