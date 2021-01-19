@@ -33,7 +33,7 @@ For examples of the two types of input files see the files in the folder example
 ### Example input files
 The example files included here (in the folder exampledata) are made based on LWK 1000G low-depth samples. There are two files:
 
-1) LWK.beagle.gz  a file with genotype likelihoods for 101 individuals at 130709 sites
+1) LWK.beagle.gz  a file with genotype likelihoods for 7 individuals at 125034 sites
 2) LWK.freq       a file with allele frequency estimates for these sites (based on data from 101 individuals)
 
 Among the LWK individuals there at least 4 pairs of relatives:
@@ -47,7 +47,7 @@ Among the LWK individuals there at least 4 pairs of relatives:
 |   5   |  6    | "NA19451" | "NA19452"       | First cousins |
 |   3   |  4    | "NA19331" | "NA19334"       | Full siblings |
 
-For a description of how this dataset was made see "Making input data" below.
+As an example of a pair of unrelated individuals you can e.g. use NA19027 and NA19313, so the samples with index 0 and 2. For a description of how this dataset was made see "Making input data" below.
 
 ## Output format
 Successfully running the program should lead to 3 output files and if run the program with "–o exampleoutput" these will be called
@@ -91,7 +91,7 @@ Then we ran the program ANGSD to get a genotype likelihood files as well as freq
 
 In that command: 
 
-1) LWK.bamlist is a file that contains a line for each bamfile and this line contains the full path of the given bamfile on your system
+1) LWK.bamlist is a file that contains a line for each bamfile and this line contains the full path of the given bamfile on your system. In our case it consisted of a files with 101 lines.
 
 2) LWK.sites contains a line for each site to include in the dataset and this line contains 4 pieces of information tab separated, namely chromosome number, position, major allele and minor allele. Note that this needs to be indexed by ANGSD for details see http://www.popgen.dk/angsd/index.php/Sites     
 
@@ -99,7 +99,7 @@ In that command:
 
 For details on what the different options in ANGSD mean see http://www.popgen.dk/angsd/index.php/Genotype_Likelihoods and http://www.popgen.dk/angsd/index.php/Allele_Frequencies. 
 
-The above command will create a file LWK.beagle.gz and a file LWK.mafs.gz. The first one contains genotype likelihoods and is in exactly the format that is needed for LocalNgsRelate. The other one, which contains allele frequencies, needs to be altered a bit to work as an input file for LocalNgsRelate. But all we did to make the final input file fromit was to run the following command:
+The above command will create a file LWK.beagle.gz and a file LWK.mafs.gz. The first one contains genotype likelihoods and is in exactly the format that is needed for LocalNgsRelate. However note that to make the run examples below faster to run, we subseextracted the GLs only for the first 7 (and only relevant) individuals instead of all 101). The other file, which contains allele frequencies, needs to be altered a bit to work as an input file for LocalNgsRelate. But all we did to make the final input file from it was to run the following command:
 
 ```
 zcat LWK.mafs.gz | cut -f5 |sed 1d > LWK.freq
@@ -114,23 +114,26 @@ mkdir exampleruns
 cd exampleruns
 ```
 
-And then we can run the following commands to analyse the 4 listed related pairs (see “Example input files”):
+And then we can run the following commands to analyse the 5 pairs pairs listed above (see “Example input files”):
 
 ```
 ## Set path to the program folder. NB. replace with the path on your own computer! 
 localngsrelatefolder="/home/ida/Programs/LocalNgsRelate/"
 
 ## Analyse the half sib pair 
-$localngsrelatefolder/src/cpp/localngsrelate -a 0 -b 1 -gbeagle $localngsrelatefolder/exampledata/LWK -f $localngsrelatefolder/exampledata/LWK.freq -n 101 -fixk2to0 1 -O exampleoutput_ind0_ind1 2>&1 | tee exampleoutput_ind0_ind1.fulllog
+$localngsrelatefolder/src/cpp/localngsrelate -a 0 -b 1 -gbeagle $localngsrelatefolder/exampledata/LWK -f $localngsrelatefolder/exampledata/LWK.freq -n 7 -fixk2to0 1 -O exampleoutput_ind0_ind1 2>&1 | tee exampleoutput_ind0_ind1.fulllog
 
 ## Analyse the parent offspring pair
-$localngsrelatefolder/src/cpp/localngsrelate -a 2 -b 3 -gbeagle $localngsrelatefolder/exampledata/LWK -f $localngsrelatefolder/exampledata/LWK.freq -n 101 -fixk2to0 1 -O exampleoutput_ind2_ind3 2>&1 | tee exampleoutput_ind2_ind3.fulllog
+$localngsrelatefolder/src/cpp/localngsrelate -a 2 -b 3 -gbeagle $localngsrelatefolder/exampledata/LWK -f $localngsrelatefolder/exampledata/LWK.freq -n 7 -fixk2to0 1 -O exampleoutput_ind2_ind3 2>&1 | tee exampleoutput_ind2_ind3.fulllog
 
 ## Analyse the first cousin pair 
-$localngsrelatefolder/src/cpp/localngsrelate -a 5 -b 6 -gbeagle $localngsrelatefolder/exampledata/LWK -f $localngsrelatefolder/exampledata/LWK.freq -n 101 -fixk2to0 1 -O exampleoutput_ind5_ind6 2>&1 | tee exampleoutput_ind5_ind6.fulllog
+$localngsrelatefolder/src/cpp/localngsrelate -a 5 -b 6 -gbeagle $localngsrelatefolder/exampledata/LWK -f $localngsrelatefolder/exampledata/LWK.freq -n 7 -fixk2to0 1 -O exampleoutput_ind5_ind6 2>&1 | tee exampleoutput_ind5_ind6.fulllog
 
 ## Analyse the full sib pair  
-$localngsrelatefolder/src/cpp/localngsrelate -a 3 -b 4 -gbeagle $localngsrelatefolder/exampledata/LWK -f $localngsrelatefolder/exampledata/LWK.freq -n 101 -O exampleoutput_ind3_ind4 2>&1 | tee exampleoutput_ind3_ind4.fulllog
+$localngsrelatefolder/src/cpp/localngsrelate -a 3 -b 4 -gbeagle $localngsrelatefolder/exampledata/LWK -f $localngsrelatefolder/exampledata/LWK.freq -n 7 -O exampleoutput_ind3_ind4 2>&1 | tee exampleoutput_ind3_ind4.fulllog
+
+## Analyse the unrelated pair 
+$localngsrelatefolder/src/cpp/localngsrelate -a 0 -b 2 -gbeagle $localngsrelatefolder/exampledata/LWK -f $localngsrelatefolder/exampledata/LWK.freq -n 7 -fixk2to0 1 -O exampleoutput_ind0_ind2 2>&1 | tee exampleoutput_ind0_ind2.fulllog
 ```
 
 Note that we here specify the input files with –gbeagle and –f, the number of individuals in the data with –n and the output name prefix with the option –O. Also, note that we are here running the program with default values except for in the first 3 runs where we set the option -fixk2to0 1 since we only expect k2 to be above 0 for full siblings or twins. Finally note that we ended each command line with “2>&1 | tee exampleoutput_indx_indy.fulllog” where x and y are the indices of the analysed individuals. This produces a long log file which can be used to assess convergence (see below for how).
