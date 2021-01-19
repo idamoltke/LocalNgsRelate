@@ -36,7 +36,7 @@ The example files included here (in the folder exampledata) are made based on LW
 1) LWK.beagle.gz  a file with genotype likelihoods for 7 individuals at 125034 sites
 2) LWK.freq       a file with allele frequency estimates for these sites (based on data from 101 individuals)
 
-Among the LWK individuals there at least 4 pairs of relatives:
+Among the 7 LWK individuals there at least 4 pairs of relatives:
 
 
 
@@ -69,7 +69,7 @@ Chr     Pos     Freq            Viterbi Post0                   Post1           
 1       118617  0.318185        1       4.6829086584325724e-01  5.3170913415127108e-01  0.0000000000000000e+00
 ```
 
-If you as shown below run the program with “2>&1 | tee exampleoutput.fulllog” added to the end of your command your will get an additional output file (exampleoutput.fulllog), which contains everything that would otherwise be written to the screen. This can be helpful if you want to assess convergence (for details see “Run examples” below). To get this to work you need the program tee installed.
+If you - as shown in the run examples below - run the program with “2>&1 | tee exampleoutput.fulllog” added to the end of your command your will get an additional output file (exampleoutput.fulllog), which contains everything that would otherwise be written to the screen. This can be helpful if you want to assess convergence (for details about this see “Run examples” below). To get this to work you need the program tee installed.
 
 
 ## Run examples
@@ -99,7 +99,7 @@ In that command:
 
 For details on what the different options in ANGSD mean see http://www.popgen.dk/angsd/index.php/Genotype_Likelihoods and http://www.popgen.dk/angsd/index.php/Allele_Frequencies. 
 
-The above command will create a file LWK.beagle.gz and a file LWK.mafs.gz. The first one contains genotype likelihoods and is in exactly the format that is needed for LocalNgsRelate. However note that to make the run examples below faster to run, we subseextracted the GLs only for the first 7 (and only relevant) individuals instead of all 101). The other file, which contains allele frequencies, needs to be altered a bit to work as an input file for LocalNgsRelate. But all we did to make the final input file from it was to run the following command:
+The above command will create a file LWK.beagle.gz and a file LWK.mafs.gz. The first one contains genotype likelihoods and is in exactly the format that is needed for LocalNgsRelate. However, note that to make the run examples below faster to run, we subseextracted the GLs only for the first 7 (and only relevant) individuals instead of all 101). The other file, which contains allele frequencies, needs to be altered a bit to work as an input file for LocalNgsRelate. But all we did to make the final input file from it was to run the following command:
 
 ```
 zcat LWK.mafs.gz | cut -f5 |sed 1d > LWK.freq
@@ -107,7 +107,7 @@ zcat LWK.mafs.gz | cut -f5 |sed 1d > LWK.freq
 
 
 ###	Analysing selected pairs
-Let’s here try to infer IBD tracks for a few pairs of individuals in the example dataset. We can do this from the command line by first creating a folder for the results where you want it on you compute and moving into this folder:
+Let’s here try to infer IBD tracks for the 5 pairs of individuals in the example dataset mentioned above (in . We can do this from the command line by first creating a folder for the results where you want it on you compute and moving into this folder:
 
 ```
 mkdir exampleruns
