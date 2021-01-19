@@ -129,14 +129,14 @@ $localngsrelatefolder/src/cpp/localngsrelate -a 2 -b 3 -gbeagle $localngsrelatef
 ## Analyse the first cousin pair 
 $localngsrelatefolder/src/cpp/localngsrelate -a 5 -b 6 -gbeagle $localngsrelatefolder/exampledata/LWK -f $localngsrelatefolder/exampledata/LWK.freq -n 7 -fixk2to0 1 -O exampleoutput_ind5_ind6 2>&1 | tee exampleoutput_ind5_ind6.fulllog
 
-## Analyse the full sib pair  
-$localngsrelatefolder/src/cpp/localngsrelate -a 3 -b 4 -gbeagle $localngsrelatefolder/exampledata/LWK -f $localngsrelatefolder/exampledata/LWK.freq -n 7 -O exampleoutput_ind3_ind4 2>&1 | tee exampleoutput_ind3_ind4.fulllog
-
 ## Analyse the unrelated pair 
 $localngsrelatefolder/src/cpp/localngsrelate -a 0 -b 2 -gbeagle $localngsrelatefolder/exampledata/LWK -f $localngsrelatefolder/exampledata/LWK.freq -n 7 -fixk2to0 1 -O exampleoutput_ind0_ind2 2>&1 | tee exampleoutput_ind0_ind2.fulllog
+
+## Analyse the full sib pair  
+$localngsrelatefolder/src/cpp/localngsrelate -a 3 -b 4 -gbeagle $localngsrelatefolder/exampledata/LWK -f $localngsrelatefolder/exampledata/LWK.freq -n 7 -O exampleoutput_ind3_ind4 2>&1 | tee exampleoutput_ind3_ind4.fulllog
 ```
 
-Note that we here specify the input files with –gbeagle and –f, the number of individuals in the data with –n and the output name prefix with the option –O. Also, note that we are here running the program with default values except for in the first 3 runs where we set the option -fixk2to0 1 since we only expect k2 to be above 0 for full siblings or twins. Finally note that we ended each command line with “2>&1 | tee exampleoutput_indx_indy.fulllog” where x and y are the indices of the analysed individuals. This produces a long log file which can be used to assess convergence (see below for how).
+Note that we here specify the prefix of the input genotype likelihood file with the option –gbeagle, the full name of the frequency file with the option –f, the number of individuals in the genotype likelihood file with the option –n and the output name prefix with the option –O. Also, note that we are here running the program with default values except for in the first 4 runs, where we set the option -fixk2to0 1 since we only expect k2 to be above 0 for full siblings or twins. Finally, note that we have ended each command line with “2>&1 | tee exampleoutput_indx_indy.fulllog” where x and y are the indices of the analysed individuals. This produces a long log file which can be used to assess convergence (for details on how, see below).
 
 
 ### Assessing convergence
