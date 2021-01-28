@@ -30,7 +30,7 @@ plot.localngsrelate.posterior <- function(x,col=1:3,lwd=2,ylab="Posterier probab
     }
 
     if(legend)
-        legend("topright",paste("IBD=",2:0),col=rev(1:3),lty=1,inset=c(-0.11,0),xpd=TRUE)
+        legend("topright",paste("IBD =",2:0),col=rev(1:3),lty=1,inset=c(-0.11,0),xpd=TRUE)
 }
 
 plot.localngsrelate.viterbi <- function(x,col=1:3,cex=0.2,ylab="Viterbi inferred IBD state",xlab="Position (Mb)",chr=NULL,legend=TRUE,...){
@@ -59,7 +59,7 @@ plot.localngsrelate.viterbi <- function(x,col=1:3,cex=0.2,ylab="Viterbi inferred
     }
 
     if(legend)
-        legend("topright",paste("IBD=",2:0),col=rev(1:3),lty=1,inset=c(-0.11,0),xpd=TRUE)
+        legend("topright",paste("IBD =",2:0),col=rev(1:3),lty=1,inset=c(-0.11,0),xpd=TRUE)
 }
 
 ## Example of use
