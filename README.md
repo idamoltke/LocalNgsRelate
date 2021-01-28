@@ -185,10 +185,10 @@ source(paste(localngsrelatefolder,"/src/scripts/plotLocalNgsRelateOutput.R",sep=
 nam = "exampleoutput_ind3_ind4"                                                 
 res = read.table(paste(nam,".IBDtractinference.gz",sep=""),header=T)
       
-## Plot posterior 
+## Plot results for posterior decoding and viterbi
 pdf(paste(nam,"_posteriorandviterbi_chr2.pdf",sep=""),h=4,w=16)                                               
-plot.localngsrelate.posterior(res,chr=2)
-plot.localngsrelate.viterbi(res,chr=2)
+plot.localngsrelate.posterior(res,chr=2,xlab="Position on chromosome 2 (Mb)")
+plot.localngsrelate.viterbi(res,chr=2,xlab="Position on chromosome 2 (Mb)")
 graphics.off()               
 ```
 
@@ -203,7 +203,7 @@ source(paste(localngsrelatefolder,"/src/scripts/plotLocalNgsRelateOutput.R",sep=
 nam = "exampleoutput_ind2_ind3"                                                 
 res = read.table(paste(nam,".IBDtractinference.gz",sep=""),header=T)
       
-## Plot posterior 
+## Plot results for posterior decoding and viterbi 
 pdf(paste(nam,"_posteriorandviterbi_allchrs.pdf",sep=""),h=4,w=16)                                               
 plot.localngsrelate.posterior(res)
 plot.localngsrelate.viterbi(res)
