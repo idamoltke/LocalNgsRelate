@@ -1,7 +1,10 @@
 # LocalNgsRelate
 
+
 ## Brief description
-This page contains information about the program called LocalNgsRelate, which can be used to infer IBD sharing along the genomes of two individuals from low-depth Next Generation Sequencing (NGS) data by using genotype likelihoods instead of called genotypes. To be able to infer the IBD sharing you will need to know the population allele frequencies and have genotype likelihoods. This can be obtained e.g. using the program ANGSD as shown in example 1 below. For more information about ANGSD see here: http://popgen.dk/angsd/index.php/Quick_Start. 
+![](readmeimages/readme_image1.png)
+
+This page contains information about the program called LocalNgsRelate, which can be used to infer IBD sharing along the genomes of two individuals from low-depth Next Generation Sequencing (NGS) data by using genotype likelihoods (instead of called genotypes). For an example that illustrates the output see the plot above. To be able to infer the IBD sharing you will need to know the population allele frequencies and have genotype likelihoods. This can be obtained e.g. using the program ANGSD as shown in example 1 below. For more information about ANGSD see here: http://popgen.dk/angsd/index.php/Quick_Start. 
 
 ## How to download and install
 On a linux or mac system with git and g++ installed LocalNgsRelate can be downloaded and installed as follows:
