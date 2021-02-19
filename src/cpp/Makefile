@@ -1,23 +1,58 @@
-CXX=g++
+#modied from htslib makefile
+FLAGS=-O3
 
-FLAGS= -lz
+CXXFLAGS += $(FLAGS)
 
-all: main
+CXXSRC = $(wildcard *.cpp)
+OBJ = $(CXXSRC:.cpp=.o)
 
-bfgs.o : bfgs.h bfgs.cpp
-	$(CXX) -c bfgs.cpp $(FLAGS)
+all: LocalNgsRelate
 
-analysisfunctions.o: analysisfunctions.h analysisfunctions.cpp
-	$(CXX) -c analysisfunctions.cpp $(FLAGS)
+PACKAGE_VERSION  = 0.123
 
-filehandlingfunctions.o: filehandlingfunctions.h filehandlingfunctions.cpp
-	$(CXX) -c filehandlingfunctions.cpp $(FLAGS)
+# Adjust $(HTSSRC) to point to your top-level htslib directory
+ifdef HTSSRC
+$(info HTSSRC defined)
+HTS_INCDIR=$(realpath $(HTSSRC))
+HTS_LIBDIR=$(realpath $(HTSSRC))/libhts.a
+else
+$(info HTSSRC not defined, assuming systemwide installation -lhts)
+endif
 
-localngsrelate.o: localngsrelate.cpp
-	$(CXX) -c localngsrelate.cpp $(FLAGS)
 
-main: analysisfunctions.o localngsrelate.o filehandlingfunctions.o bfgs.o
-	$(CXX) localngsrelate.o analysisfunctions.o filehandlingfunctions.o bfgs.o  $(FLAGS) -o localngsrelate
+ifneq "$(wildcard ../../.git)" ""
+PACKAGE_VERSION := $(shell git describe --always --dirty)
+version.h: $(if $(wildcard version.h),$(if $(findstring "$(PACKAGE_VERSION)",$(shell cat version.h)),,force))
+endif
 
-clean: 
-	rm -f *.o localngsrelate
+version.h:
+	echo '#define LocalNgsRelate_version "$(PACKAGE_VERSION)"' > $@
+
+.PHONY: misc clean test
+
+-include $(OBJ:.o=.d)
+
+ifdef HTSSRC
+%.o: %.cpp
+	$(CXX) -c  $(CXXFLAGS) $*.cpp -I$(HTS_INCDIR) -D__WITH_BCF__ ## -DDB_EMIS -DDB_MP
+	$(CXX) -MM $(CXXFLAGS) $*.cpp -I$(HTS_INCDIR) -D__WITH_BCF__ >$*.d
+
+LocalNgsRelate: version.h $(OBJ)
+	$(CXX) $(FLAGS)  -o LocalNgsRelate *.o $(HTS_LIBDIR) -lz -lm -lbz2 -llzma -lpthread -lcurl -D__WITH_BCF__
+else
+%.o: %.cpp
+	$(CXX) -c  $(CXXFLAGS)  -D__WITH_BCF__ $*.cpp
+	$(CXX) -MM $(CXXFLAGS)  -D__WITH_BCF__ $*.cpp >$*.d
+
+LocalNgsRelate: version.h $(OBJ)
+	$(CXX) $(FLAGS)  -o LocalNgsRelate *.o -lz -lpthread -lhts  -lbz2 -llzma 
+endif
+
+clean:
+	rm  -f *.o *.d LocalNgsRelate *~ version.h
+
+.PHONY: all clean install install-all install-misc misc test
+
+test:
+	echo "Only subset of analyses is being tested"
+	cd test;./testAll.sh ../ngsRelate

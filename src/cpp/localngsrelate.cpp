@@ -9,6 +9,7 @@
 #include <zlib.h>  
 #include <cmath>
 #include <cassert>
+#include "version.h"
 #include "analysisfunctions.h"
 #include "filehandlingfunctions.h"
 
@@ -30,7 +31,7 @@ typedef struct{
 
 void print_info(FILE *fp){
   fprintf(fp, "\n\n");
-  fprintf(fp, "You are using LocalNgsRelate version 0.999 (build time: %s:%s)\n",__DATE__,__TIME__);
+  fprintf(fp, "You are using LocalNgsRelate version %s  (build time: %s:%s)\n",LocalNgsRelate_version,__DATE__,__TIME__);
   fprintf(fp, "\nUsage: ./localngsrelate  [options] \n");
   fprintf(fp, "\nRequired options:\n");
   fprintf(fp, "   -f         <filename>    Name of file with frequencies\n");
