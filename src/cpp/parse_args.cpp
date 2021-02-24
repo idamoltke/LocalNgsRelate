@@ -19,7 +19,7 @@ cArg get_pars(int argc,char **argv){
   ca.vcffile=NULL;
   ca.outname=NULL;
   ca.vcf_format_field = strdup("PL"); // can take PL or GT
-  ca.vcf_allele_field = strdup("AFngsrelate"); // can take any tag value e.g. AF AF1 etc
+  ca.vcf_allele_field = NULL; // can take any tag value e.g. AF AF1 etc, if NULL then freq will be calculated
   ca.nInd=-1;
   ca.p.calcA=-1;
   ca.p.pair[0]=0;
@@ -81,8 +81,8 @@ cArg get_pars(int argc,char **argv){
       case 'b': ca.p.pair[1] = atoi(optarg); break;
       case 'c': ca.p.calcA = atoi(optarg); break;
       case 'A': ca.p.a = atof(optarg); break;
-      case 'h': ca.alim[0] = atof(optarg); break;
-      case 'j': ca.alim[1] = atof(optarg); break;
+      case 'h': alim[0] = atof(optarg); break;
+      case 'j': alim[1] = atof(optarg); break;
       case 'x': ca.p.k0 = atof(optarg); break;
       case 'y': ca.p.k1 = atof(optarg); break;
       case 'w': ca.p.k2 = atof(optarg); break;
@@ -221,19 +221,34 @@ cArg get_pars(int argc,char **argv){
       stop=true;
     }
   }
-  if(!(ca.alim[0]>0)){
+  if(!(alim[0]>0)){
     fprintf(stderr,"\n\t## Error: provided minA value is not above 0 as it should be\n");
     stop=true;
   }
-  if(!(ca.alim[1]>0)){
+  if(!(alim[1]>0)){
     fprintf(stderr,"\n\t## Error: provided maxA value is not above 0 as it should be\n");
     stop=true;
   }
-  if(ca.alim[0]>ca.alim[1]){
+  if(alim[0]>alim[1]){
     fprintf(stderr,"\n\t## Error: provided maxA value is smaller than the provided minA\n");
     stop=true;
   }
   if(stop)
     exit(0);
   return ca;
+}
+
+void print_carg(FILE *fp,cArg ca){
+  fprintf(fp,"########\n");
+  fprintf(fp,"freqfile: %s\n",ca.freqfile);
+  fprintf(fp,"glbeaglefile: %s\n",ca.glbeaglefile);
+  fprintf(fp,"vcffile: %s\n",ca.vcffile);
+  fprintf(fp,"outname: %s\n",ca.outname);
+  fprintf(fp,"vcf_format_field: %s\n",ca.vcf_format_field);
+  fprintf(fp,"vcf_allele_field: %s\n",ca.vcf_allele_field);
+  fprintf(fp,"fixk2to0: %d nInd: %d minMaf: %f switchMaf: %d\n",ca.fixk2to0,ca.nInd,ca.minMaf,ca.switchMaf);
+  fprintf(fp,"seed: %d int: %d file: %p alim=(%f,%f) runoldrelateV: %d\n",ca.seed,ca.nOpti,ca.flog,alim[0],alim[1],ca.runoldrelateV);
+  para p=ca.p;
+  fprintf(fp,"a: %f k0: %f k1: %f k2: %f pair=(%d,%d) calcA: %d\n",p.a,p.k0,p.k1,p.k2,p.pair[0],p.pair[1],p.calcA);
+  fprintf(fp,"########\n");
 }

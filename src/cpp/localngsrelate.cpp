@@ -47,7 +47,7 @@ void print_info(FILE *fp){
   fprintf(fp, "   -N         <INT>         Number of times to start parameter estimation for each pair with random seed (default 1)\n");
   fprintf(fp, "   -O         <fileprefix>  Prefix for name of outputfiles\n");
   fprintf(fp, "   -T         <STRING>      For -B bcf use PL (default) or GT tag\n");
-  fprintf(fp, "   -F         <STRING>      For -h vcf use allele frequency TAG e.g. AFngsrelate (default)\n");  
+  fprintf(fp, "   -F         <STRING>      For -B bcf use allele frequency TAG e.g. AF,AF1, NULL=recalculate from data\n");  
   fprintf(fp, "\n");
   exit(0);
 }
@@ -68,7 +68,7 @@ int main(int argc, char **argv){
   time_t t2=time(NULL);
 
   cArg ca = get_pars(argc,argv);
-  
+  print_carg(stderr,ca);
 
  
   // Read in gls

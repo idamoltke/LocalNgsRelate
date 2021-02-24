@@ -16,8 +16,9 @@ typedef struct{
   int seed;
   int nOpti;
   FILE *flog;
-  double alim[2];
   int runoldrelateV;
 }cArg;
 
 cArg get_pars(int argc,char **argv);
+
+void print_carg(FILE *fp,cArg ca);

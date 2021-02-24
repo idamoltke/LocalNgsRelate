@@ -29,8 +29,8 @@ typedef struct satan_t{
   char*fname;
   int minind;
   double minfreq;
-  std::string vcf_format_field;
-  std::string vcf_allele_field;
+  char* vcf_format_field;
+  char* vcf_allele_field;
   char *seek;
   std::vector<double *> mygl;
   std::vector<double> freqs;
@@ -100,7 +100,6 @@ bool is_nan_vcf(double x) { return x != x; }
 
 //from angsd
 double emFrequency(double *loglike,int numInds, int iter,double start,char *keep,int keepInd){
-
   if(keepInd == 0)
     return 0.0;
   
@@ -174,7 +173,7 @@ double emFrequency(double *loglike,int numInds, int iter,double start,char *keep
 
 
 //fnaee=bcf vcf, 
-perChr getgls2(char*fname,int minind,double minfreq, std::string &vcf_format_field, std::string &vcf_allele_field,char *seek,int switchmaf){
+perChr getgls2(char*fname,int minind,double minfreq, char * vcf_format_field, char * vcf_allele_field,char *seek,int switchmaf){
   perChr pc;
   std::vector<double *> mygl;
   std::vector<double> freqs;
@@ -245,7 +244,7 @@ perChr getgls2(char*fname,int minind,double minfreq, std::string &vcf_format_fie
 
     float ln_gl[3*pc.nInd];    
 
-    if(vcf_format_field == "PL") {
+    if(strcmp(vcf_format_field,"PL")==0) {
       npl = bcf_get_format_int32(hdr, rec, "PL", &pl, &npl_arr);
       if(npl<0){
         // return codes: https://github.com/samtools/htslib/blob/bcf9bff178f81c9c1cf3a052aeb6cbe32fe5fdcc/htslib/vcf.h#L667
@@ -265,7 +264,7 @@ perChr getgls2(char*fname,int minind,double minfreq, std::string &vcf_format_fie
         }
 	//         fprintf(stderr, "%d %f\n", pl[i], ln_gl[i]);
       }
-    } else if(vcf_format_field == "GT"){
+    } else if(strcmp(vcf_format_field,"GT")==0){
        int ngts = bcf_get_genotypes(hdr, rec, &gt, &ngt_arr);
        if ( ngts<0 ){
          fprintf(stderr, "BAD SITE %s:%ld. return code:%d while fetching GT tag\n", bcf_seqname(hdr,rec), rec->pos, npl);
@@ -321,19 +320,24 @@ perChr getgls2(char*fname,int minind,double minfreq, std::string &vcf_format_fie
     //    fprintf(stderr,"keepind:%d\n",keepInd);
 
     
-    naf = bcf_get_info_float(hdr, rec, vcf_allele_field.c_str(), &af, &naf_arr);
+   
     // fprintf(stderr,"rec->pos:%d npl:%d ngl:%d naf:%d rec->n_allele:%d\n",rec->pos,npl,ngl,naf,rec->n_allele);    
     //if multiple alt alleles then n_allele>3. We only care about diallelic ref/alt alleless
     //		if(rec->n_allele==4) fprintf(stdout,"\n%s\n",rec->d.allele[2]);
     //ok this is a bit messed up. apparantly sometime the allele is <*> sometimes not.
     // just use the first two alleles now and discard the rest of the alleles.
-
     double freq;
-    if(naf==1){
-      freq = af[0];
-    }else{
+    if(vcf_allele_field==NULL)
       freq = emFrequency(tmp,pc.nInd,50,0.05,keep,keepInd);
+    else{
+      naf = bcf_get_info_float(hdr, rec, vcf_allele_field, &af, &naf_arr);
+      if(naf==-1){
+	fprintf(stderr,"\t-> Problem finding tag \'%s\' in vcffile. You should check things are ok: chr: %s site: %d\n",vcf_allele_field,seqnames[rec->rid],rec->pos+1);
+	exit(0);
+      }
+      freq = af[0];
     }
+    
     //should matter, program should never run on such low freqs, this is just for validation between formats
     if(freq>0.999)
       freq=1;
@@ -488,25 +492,3 @@ std::vector<perChr> readbcfvcf_bgl(char*fname,int minind,double minfreq, char* v
 
   return perChr_results;
 }
-
-
-#ifdef __WITH_MAIN__
-
-int main(int argc, char **argv) {
-  if (argc == 1)
-    return 1;
-
-  double **gls=NULL;
-  int nind;
-  std::vector<double> freqs;
-  std::string pl=std::string("PL");
-  std::string fr=std::string("AFngsrelate");
-  char *reg = NULL;
-  if(argc==3)
-    reg=strdup(argv[2]);
-  fprintf(stderr,"reg:%s\n",reg);
-  gls = readbcfvcf(argv[1],nind,freqs,2,0.04,pl,fr,reg);
-  return 0;
-}
-
-#endif
