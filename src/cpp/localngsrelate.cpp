@@ -13,23 +13,11 @@
 #include "analysisfunctions.h"
 #include "filehandlingfunctions.h"
 #include "vcf.h"
+#include "parse_args.h"
 
-typedef struct{
-  char *freqfile;
-  char *glbeaglefile;
-  char *vcffile;
-  char *outname;
-  char *vcf_format_field;
-  char *vcf_allele_field;
-  int fixk2to0;
-  int nInd;
-  para p;
-  float minMaf;
-  int switchMaf;
-  int seed;
-  int nOpti;
-}cArg;
+std::vector<char *> dumpedFiles;
 
+double alim[2];
 
 void print_info(FILE *fp){
   fprintf(fp, "\n\n");
@@ -64,8 +52,8 @@ void print_info(FILE *fp){
   exit(0);
 }
 
-double alim[2];
-int runoldrelateV; 
+int runoldrelateV;
+
 
 int main(int argc, char **argv){
 
@@ -78,233 +66,8 @@ int main(int argc, char **argv){
   // Start run time clock
   clock_t t=clock();
   time_t t2=time(NULL);
-  
-  // Set default parameters
-  cArg ca;
-  ca.freqfile=NULL;
-  ca.glbeaglefile=NULL;
-  ca.vcffile=NULL;
-  ca.outname=NULL;
-  ca.vcf_format_field = strdup("PL"); // can take PL or GT
-  ca.vcf_allele_field = strdup("AFngsrelate"); // can take any tag value e.g. AF AF1 etc
-  ca.nInd=-1;
-  ca.p.calcA=-1;
-  ca.p.pair[0]=0;
-  ca.p.pair[1]=1;
-  ca.p.a=-1;
-  ca.p.k0=-1;
-  ca.p.k1=-1;
-  ca.p.k2=-1;
-  ca.fixk2to0 = 0;
-  ca.minMaf = 0.05;
-  ca.switchMaf = 0;
-  ca.seed = 20;
-  ca.nOpti = 20;
-  alim[0]=0.00000001;
-  alim[1]=0.10;
-  runoldrelateV = 0; // Remove?
-  
-  // Specify the expected options for parsing purposes
-  static struct option long_options[] = {
-      {"f",       required_argument, 0,  'f' },
-      {"beagle"     ,  required_argument, 0, 'g' },
-      {"bcffile", required_argument, 0,  'B' },
-      {"T",       required_argument, 0,  'T' },
-      {"F",       required_argument, 0,  'F' },
-      {"n",       required_argument, 0,  'n' },
-      {"a",       required_argument, 0,  'a' },
-      {"b",       required_argument, 0,  'b' },
-      {"calcA",   required_argument, 0,  'c' },
-      {"fixA",    required_argument, 0,  'A' },
-      {"minA",    required_argument, 0,  'h' },
-      {"maxA",    required_argument, 0,  'j' },
-      {"k0",      required_argument, 0,  'x' },
-      {"k1",      required_argument, 0,  'y' },
-      {"k2",      required_argument, 0,  'w' },
-      {"fixk2to0",required_argument, 0,  'v' },
-      {"l",       required_argument, 0,  'l' },
-      {"s",       required_argument, 0,  's' },
-      {"r",       required_argument, 0,  'r' },
-      {"N",       required_argument, 0,  'N' },
-      {"O",       required_argument, 0,  'O' },
-      {"old",     required_argument, 0,  'o' }, // Remove when done?
-      {0,        0,                0,  0   }
-    };
-  
-  // If there are any options specified then read them
-  int opt= 0;
-  int long_index = 0;
-  while ((opt = getopt_long(argc, argv,"f:g:G:B:T:F:n:a:b:c:A:h:j:x:y:w:v:l:s:r:N:O:o:", 
-				 long_options, &long_index )) != -1) {
-    switch (opt) {
-	// Reading in arguments and setting parameter values accordingly
-      case 'f': ca.freqfile = strdup(optarg); break;
-      case 'g': ca.glbeaglefile = strdup(optarg); break;
-      case 'B': ca.vcffile = strdup(optarg); break;
-      case 'T': ca.vcf_format_field = strdup(optarg); break;
-      case 'F': ca.vcf_allele_field = strdup(optarg); break;	
-      case 'n': ca.nInd = atoi(optarg); break;
-      case 'a': ca.p.pair[0] = atoi(optarg); break;
-      case 'b': ca.p.pair[1] = atoi(optarg); break;
-      case 'c': ca.p.calcA = atoi(optarg); break;
-      case 'A': ca.p.a = atof(optarg); break;
-      case 'h': alim[0] = atof(optarg); break;
-      case 'j': alim[1] = atof(optarg); break;
-      case 'x': ca.p.k0 = atof(optarg); break;
-      case 'y': ca.p.k1 = atof(optarg); break;
-      case 'w': ca.p.k2 = atof(optarg); break;
-      case 'v': ca.fixk2to0 = atoi(optarg); ca.p.k2 = 0; break;
-      case 'l': ca.minMaf = atof(optarg); break;
-      case 's': ca.switchMaf = atoi(optarg); break;
-      case 'r': ca.seed = atoi(optarg); break;
-      case 'N': ca.nOpti = atoi(optarg); break;
-      case 'O': ca.outname = strdup(optarg); break;
-      case 'o': runoldrelateV = atoi(optarg); break; // Remove when done?
-      default: {
-	fprintf(stderr,"\t-> Unknown arg: %d %s\n",opt,optarg);
-	//	print_info(stderr);
-	return 0;
-      }
-    }
-  }
-  fprintf(stderr,"-B = %s\n",ca.vcffile);
-  // Start log file and write command to screen
-  int nooutname = 0;
-  if(ca.outname==NULL){
-    nooutname = 1;
-    if(ca.glbeaglefile!=NULL)
-      ca.outname = ca.glbeaglefile;
-    if(ca.vcffile!=NULL)
-      ca.outname = ca.vcffile;
-  }
 
-  std::vector<char *> dumpedFiles;
-  FILE *flog=openFile(ca.outname,".log",dumpedFiles);
-  fprintf(stderr,"\n\t-> You are using LocalNgsRelate version %s (build time: %s:%s)\n",LocalNgsRelate_version,__DATE__,__TIME__);
-  fprintf(stderr,"\t-> Command running is:\n\t   ");
-  fprintf(flog,"\t-> You are using LocalNgsRelate version Ts (build time: %s:%s)\n",LocalNgsRelate_version,__DATE__,__TIME__);
-  fprintf(flog,"\t-> Command running is:\n\t   ");
-  for(int i=0;i<argc;i++){
-    fprintf(flog,"%s ",argv[i]);
-    fprintf(stderr,"%s ",argv[i]);
-    if(i==6||i==12){
-      fprintf(stderr,"\n\t   ");
-    }
-  }
-  fprintf(stderr,"\n");
-  fprintf(flog,"\n");
-  if(nooutname){
-     fprintf(stderr,"\t->NB. Since no output prefix was provided %s will be used as prefix for all output\n\n",ca.outname);
-  }
-  
-  // Check if all necessary arguments have been provided
-  bool stop = false;
-
-  if(ca.p.a!=-1 && ca.p.calcA==1){
-    fprintf(stderr,"\n\t## Error: you can't supply both -fixA and -calcA \n");
-    stop=true;
-  }
-  if(ca.glbeaglefile==NULL&&ca.vcffile==NULL){ //
-    fprintf(stderr,"\n\t## Error: please supply a genotype likelihood file using the option -gbeagle or vcffile with -B\n");
-    stop=true;
-  }else if(ca.glbeaglefile!=NULL&&ca.vcffile!=NULL){
-    fprintf(stderr,"\n\t## Error: please supply only 1 input data file using -gbeagle -B\n");
-    stop=true;
-  }
-  if(ca.freqfile==NULL&&ca.vcffile==NULL){
-    fprintf(stderr,"\n\t## Error: please supply both a genotype likelihood file and a frequency file\n");
-    stop=true;
-  }
-  if(ca.nInd<1&&ca.vcffile==NULL){
-    fprintf(stderr,"\n\t## Error: number of individuals in the beagle file needs to be specified and it has to be positive\n");
-    exit(0);;
-  }
-  if(ca.p.pair[0]<0){
-    fprintf(stderr,"\n\t## Error: the specified -a value cannot be negative\n");
-    stop=true;
-  }
-  if(ca.vcffile==NULL){
-    if((ca.p.pair[0]>(ca.nInd-1))){
-      fprintf(stderr,"\n\t## Error: the specified -a value is incompatible with the number of individuals specified\n");
-      stop=true;
-    }
-    if((ca.p.pair[1]>(ca.nInd-1))){
-      fprintf(stderr,"\n\t## Error: the specified -b value is incompatible with the number of individuals specified\n");
-      stop=true;
-    }
-  }
-  if(ca.p.pair[1]<0){
-    fprintf(stderr,"\n\t## Error: the specified -b value cannot be negative\n");
-    stop=true;
-  }
-  if((ca.p.a > 0)&&((ca.p.k0<0)||(ca.p.k1<0)||(ca.p.k2<0))){
-    fprintf(stderr,"\n\t## Error: you cannot use the option -fixA without also using -k0, -k1 and -k2\n");
-    stop=true;
-  }
-  if((ca.p.a < 0)&&(ca.p.calcA<0)&&((ca.p.k0>-1)&&(ca.p.k1>-1)&&(ca.p.k2>-1))){
-    fprintf(stderr,"\n\t## Error: you cannot use the options -k0, -k1 and -k2 without either using -fixA or -calcA\n");
-    stop=true;
-  }
-  if((ca.p.calcA>0)&&((ca.p.k0==1)&&(ca.p.k1==0)&&(ca.p.k2==0))){
-    fprintf(stderr,"\n\t## Error: if you set -k0 1 aCalc cannot be used (only works for related pairs)\n");
-    stop=true;
-  }
-
-  // Check if user provided values are valid
-  if((ca.p.k0>-1)||(ca.p.k1>-1)||(ca.p.k2>-1)){
-    if(((ca.p.k0<0)||(ca.p.k1<0)||(ca.p.k2<0))&&ca.fixk2to0==0){
-      fprintf(stderr,"\n\t## Error: -k0, -k1 and -k2 must all be specified together, values have to be non-negative and sum to 1 (perhaps consider --fixk2to0)\n");
-      stop=true;
-    }else{
-    double sumoffixed = 0;
-    if(ca.p.k0>0){
-      if(ca.p.k0>1){
-	fprintf(stderr,"\n\t## Error: provided k0 value was above 1 (%f)\n",ca.p.k0);
-	stop=true;
-      }else{
-	sumoffixed+=ca.p.k0;
-      }
-    }
-    if(ca.p.k1>0){
-      if(ca.p.k1>1){
-	fprintf(stderr,"\n\t## Error: provided k1 value was above 1 (%f)\n",ca.p.k1);
-	stop=true;
-      }else{
-	sumoffixed+=ca.p.k1;
-      }
-    }
-    if(ca.p.k2>0){
-      if(ca.p.k2>1){
-	fprintf(stderr,"\n\t## Error: provided k2 value was above 1 (%f)\n",ca.p.k2);
-	stop=true;
-      }else{
-	sumoffixed+=ca.p.k2;
-      }
-    }
-    if((sumoffixed!=1)&&ca.fixk2to0==0){
-      fprintf(stderr,"\n\t## Error: provided k values do not sum to 1\n");
-      stop=true;
-    }
-    }
-    if((ca.p.a > -1)&&!(ca.p.a>0)){
-      fprintf(stderr,"\n\t## Error: provided a is not above 0 as required\n");
-      stop=true;
-    }
-  }
-  if(!(alim[0]>0)){
-    fprintf(stderr,"\n\t## Error: provided minA value is not above 0 as it should be\n");
-    stop=true;
-  }
-  if(!(alim[1]>0)){
-    fprintf(stderr,"\n\t## Error: provided maxA value is not above 0 as it should be\n");
-    stop=true;
-  }
-  if(alim[0]>alim[1]){
-    fprintf(stderr,"\n\t## Error: provided maxA value is smaller than the provided minA\n");
-    stop=true;
-  }
-  if(stop)
-    exit(0);
+  cArg ca = get_pars(argc,argv);
   
 
  
@@ -372,7 +135,7 @@ int main(int argc, char **argv){
     loglike = doOptim(ca.p,g,pd,ca.p.calcA,ca.seed,ca.nOpti);
   }
   fprintf(stderr,"\t-> Parameters estimated/set to: a=%.16f k0=%.16f k1=%.16f k2=%.16f loglike=%.16f\n",ca.p.a,ca.p.k0,ca.p.k1,ca.p.k2,loglike);
-  fprintf(flog,"\t-> Parameters estimated/set to: a=%.16f k0=%.16f k1=%.16f k2=%.16f loglike=%.16f\n",ca.p.a,ca.p.k0,ca.p.k1,ca.p.k2,loglike);
+  fprintf(ca.flog,"\t-> Parameters estimated/set to: a=%.16f k0=%.16f k1=%.16f k2=%.16f loglike=%.16f\n",ca.p.a,ca.p.k0,ca.p.k1,ca.p.k2,loglike);
   
   FILE *fres=openFile(ca.outname,".parameters",dumpedFiles);
   fprintf(fres,"%.16f %.16f %.16f %.16f %.16f\n",ca.p.a,ca.p.k0,ca.p.k1,ca.p.k2,loglike);
@@ -409,15 +172,15 @@ int main(int argc, char **argv){
   tmppars[1] = 0; tmppars[2] = 1;
   g.pologlike = calcLoglikeGenome(tmppars,g);
   fprintf(stderr,"\t-> With the same parameters loglike for unrelated is: %.16f and loglike for parent offspring is: %.16f\n",g.uloglike,g.pologlike);
-  fprintf(flog,"\t-> With the same parameters loglike for unrelated is: %.16f and loglike for parent offspring is: %.16f\n",g.uloglike,g.pologlike);
+  fprintf(ca.flog,"\t-> With the same parameters loglike for unrelated is: %.16f and loglike for parent offspring is: %.16f\n",g.uloglike,g.pologlike);
 
-  fprintf(flog,"\t-> All analyses are done.\n");
+  fprintf(ca.flog,"\t-> All analyses are done.\n");
   fprintf(stderr,"\t-> All analyses are done.\n");
-  fprintf(flog,"\t   [ALL done] cpu-time used =  %.2f sec\n", (float)(clock() - t) / CLOCKS_PER_SEC);
-  fprintf(flog,"\t   [ALL done] walltime used =  %.2f sec\n", (float)(time(NULL) - t2));  
+  fprintf(ca.flog,"\t   [ALL done] cpu-time used =  %.2f sec\n", (float)(clock() - t) / CLOCKS_PER_SEC);
+  fprintf(ca.flog,"\t   [ALL done] walltime used =  %.2f sec\n", (float)(time(NULL) - t2));  
   fprintf(stderr,"\t   [ALL done] cpu-time used =  %.2f sec\n", (float)(clock() - t) / CLOCKS_PER_SEC);
   fprintf(stderr,"\t   [ALL done] walltime used =  %.2f sec\n", (float)(time(NULL) - t2));  
-  fclose(flog); 
+  fclose(ca.flog); 
   fprintf(stderr,"\n\t   Files created are:\n");
   for(int i=0;1&&i<dumpedFiles.size();i++){
     fprintf(stderr,"\t   %s\n",dumpedFiles[i]);

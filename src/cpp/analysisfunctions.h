@@ -1,3 +1,5 @@
+#pragma once
+#include <vector>
 #define PHI 0.013
 
 double calculateA(double k0,double k1, double k2,double phi);
@@ -55,12 +57,7 @@ typedef struct{
   int nInd;
 }bgl;
 
-
-//hmm analysis(const perChr &pc,double *freq,para p,int calcA);
-//double addProtect2(double a,double b);
-//double addProtect3(double a,double b, double c);
 void printPars(FILE *fp,para p);
-//std::vector<perChr> makeDat(const bgl& in);
 std::vector<perChr> makeDat(const bgl& in,std::vector<double>& freq,double minfreq,int switchmaf);
 genome mkGenome(const std::vector<perChr> &pd,const para &p);
 double doOptim(para &p,const genome &g,const std::vector<perChr>&pc,int calcA,int seed,int nopti);
