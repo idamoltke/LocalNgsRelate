@@ -10,8 +10,6 @@ typedef struct{
   double *logfreq;//in log
   double *logqerf;//in log 1-freq
   double **loggl;//in log
-  int *keepsite;
-  int *keepind;
   double *dpos;// distacne between positions
 }perChr;
 

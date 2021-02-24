@@ -1,1 +1,1 @@
-double ** readbcfvcf(char*fname,int &nind, std::vector<double> &freqs,int minind,double minfreq, std::string vcf_format_field, std::string vcf_allele_field, char*seek);
+std::vector<perChr> readbcfvcf_bgl(char*fname,int minind,double minfreq, char* vcf_format_field, char* vcf_allele_field,char *seek,int switchmaf);

@@ -719,7 +719,6 @@ std::vector<perChr> makeDat(const bgl& in,std::vector<double>& freq,double minfr
 
     pc.pos = new int[pc.nSites];
     pc.loggl = new double*[pc.nSites];
-    pc.keepind = new int [pc.nSites];
     pc.logfreq = new double [pc.nSites];
     pc.logqerf = new double [pc.nSites];
     pc.dpos = new double [pc.nSites-1];

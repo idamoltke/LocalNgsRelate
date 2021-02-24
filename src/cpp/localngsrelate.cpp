@@ -12,13 +12,15 @@
 #include "version.h"
 #include "analysisfunctions.h"
 #include "filehandlingfunctions.h"
-
+#include "vcf.h"
 
 typedef struct{
-  const char *freqfile;
-  const char *glbinfile;
-  const char *glbeaglefile;
-  const char *outname;
+  char *freqfile;
+  char *glbeaglefile;
+  char *vcffile;
+  char *outname;
+  char *vcf_format_field;
+  char *vcf_allele_field;
   int fixk2to0;
   int nInd;
   para p;
@@ -35,6 +37,7 @@ void print_info(FILE *fp){
   fprintf(fp, "\nUsage: ./localngsrelate  [options] \n");
   fprintf(fp, "\nRequired options:\n");
   fprintf(fp, "   -f         <filename>    Name of file with frequencies\n");
+  fprintf(fp, "   -B         <filename>    Name of bcffile\n");
   //  fprintf(fp, "   -g         <fileprefix>  Prefix of files with genotype likelihoods and positions (suffix .glf.gz and gls.pos.gz)\n"); # Not implemented
   fprintf(fp, "   -gbeagle   <fileprefix>  Prefix of files with genotype likelihoods (assumed suffix is .beagle.gz)\n");
   fprintf(fp, "   -n         <INT>         Number of samples in genotype likelihood file\n");
@@ -55,6 +58,8 @@ void print_info(FILE *fp){
   fprintf(fp, "   -r         <FLOAT>       Seed for rand (default 20)\n");
   fprintf(fp, "   -N         <INT>         Number of times to start parameter estimation for each pair with random seed (default 1)\n");
   fprintf(fp, "   -O         <fileprefix>  Prefix for name of outputfiles\n");
+  fprintf(fp, "   -T         <STRING>      For -B bcf use PL (default) or GT tag\n");
+  fprintf(fp, "   -F         <STRING>      For -h vcf use allele frequency TAG e.g. AFngsrelate (default)\n");  
   fprintf(fp, "\n");
   exit(0);
 }
@@ -64,6 +69,12 @@ int runoldrelateV;
 
 int main(int argc, char **argv){
 
+  // Check if any options are specified if not then print calling instruction
+  if(argc==1){// if no arguments, print info on program
+    print_info(stderr);     
+    return 0;
+  }
+  
   // Start run time clock
   clock_t t=clock();
   time_t t2=time(NULL);
@@ -71,9 +82,11 @@ int main(int argc, char **argv){
   // Set default parameters
   cArg ca;
   ca.freqfile=NULL;
-  ca.glbinfile =NULL;
   ca.glbeaglefile=NULL;
+  ca.vcffile=NULL;
   ca.outname=NULL;
+  ca.vcf_format_field = strdup("PL"); // can take PL or GT
+  ca.vcf_allele_field = strdup("AFngsrelate"); // can take any tag value e.g. AF AF1 etc
   ca.nInd=-1;
   ca.p.calcA=-1;
   ca.p.pair[0]=0;
@@ -94,8 +107,10 @@ int main(int argc, char **argv){
   // Specify the expected options for parsing purposes
   static struct option long_options[] = {
       {"f",       required_argument, 0,  'f' },
-      {"g"     ,  required_argument, 0, 'g' },
-      {"gbeagle", required_argument, 0,  'G' },
+      {"beagle"     ,  required_argument, 0, 'g' },
+      {"bcffile", required_argument, 0,  'B' },
+      {"T",       required_argument, 0,  'T' },
+      {"F",       required_argument, 0,  'F' },
       {"n",       required_argument, 0,  'n' },
       {"a",       required_argument, 0,  'a' },
       {"b",       required_argument, 0,  'b' },
@@ -116,22 +131,18 @@ int main(int argc, char **argv){
       {0,        0,                0,  0   }
     };
   
-  // Check if any options are specified if not then print calling instruction
-  if(argc==1){// if no arguments, print info on program
-    print_info(stderr);     
-    return 0;
-  }
-  
   // If there are any options specified then read them
   int opt= 0;
   int long_index = 0;
-  while ((opt = getopt_long_only(argc, argv,"", 
+  while ((opt = getopt_long(argc, argv,"f:g:G:B:T:F:n:a:b:c:A:h:j:x:y:w:v:l:s:r:N:O:o:", 
 				 long_options, &long_index )) != -1) {
-      switch (opt) {
+    switch (opt) {
 	// Reading in arguments and setting parameter values accordingly
       case 'f': ca.freqfile = strdup(optarg); break;
-      case 'g': ca.glbinfile = strdup(optarg); break;
-      case 'G': ca.glbeaglefile = strdup(optarg); break;
+      case 'g': ca.glbeaglefile = strdup(optarg); break;
+      case 'B': ca.vcffile = strdup(optarg); break;
+      case 'T': ca.vcf_format_field = strdup(optarg); break;
+      case 'F': ca.vcf_allele_field = strdup(optarg); break;	
       case 'n': ca.nInd = atoi(optarg); break;
       case 'a': ca.p.pair[0] = atoi(optarg); break;
       case 'b': ca.p.pair[1] = atoi(optarg); break;
@@ -149,26 +160,29 @@ int main(int argc, char **argv){
       case 'N': ca.nOpti = atoi(optarg); break;
       case 'O': ca.outname = strdup(optarg); break;
       case 'o': runoldrelateV = atoi(optarg); break; // Remove when done?
-      default: return 0;//{fprintf(stderr,"unknown arg:\n");return 0;}
-	print_info(stderr);
+      default: {
+	fprintf(stderr,"\t-> Unknown arg: %d %s\n",opt,optarg);
+	//	print_info(stderr);
+	return 0;
       }
+    }
   }
-      
+  fprintf(stderr,"-B = %s\n",ca.vcffile);
   // Start log file and write command to screen
   int nooutname = 0;
   if(ca.outname==NULL){
     nooutname = 1;
     if(ca.glbeaglefile!=NULL)
       ca.outname = ca.glbeaglefile;
-    else
-      ca.outname = ca.glbinfile;
+    if(ca.vcffile!=NULL)
+      ca.outname = ca.vcffile;
   }
 
   std::vector<char *> dumpedFiles;
   FILE *flog=openFile(ca.outname,".log",dumpedFiles);
-  fprintf(stderr,"\n\t-> You are using LocalNgsRelate version 0.999 (build time: %s:%s)\n",__DATE__,__TIME__);
+  fprintf(stderr,"\n\t-> You are using LocalNgsRelate version %s (build time: %s:%s)\n",LocalNgsRelate_version,__DATE__,__TIME__);
   fprintf(stderr,"\t-> Command running is:\n\t   ");
-  fprintf(flog,"\t-> You are using LocalNgsRelate version 0.999 (build time: %s:%s)\n",__DATE__,__TIME__);
+  fprintf(flog,"\t-> You are using LocalNgsRelate version Ts (build time: %s:%s)\n",LocalNgsRelate_version,__DATE__,__TIME__);
   fprintf(flog,"\t-> Command running is:\n\t   ");
   for(int i=0;i<argc;i++){
     fprintf(flog,"%s ",argv[i]);
@@ -190,18 +204,18 @@ int main(int argc, char **argv){
     fprintf(stderr,"\n\t## Error: you can't supply both -fixA and -calcA \n");
     stop=true;
   }
-  if(ca.glbeaglefile==NULL&&ca.glbinfile==NULL){
-    fprintf(stderr,"\n\t## Error: please supply a genotype likelihood file using the option -gbeagle\n");
+  if(ca.glbeaglefile==NULL&&ca.vcffile==NULL){ //
+    fprintf(stderr,"\n\t## Error: please supply a genotype likelihood file using the option -gbeagle or vcffile with -B\n");
     stop=true;
-  }else if(ca.glbeaglefile!=NULL&&ca.glbinfile!=NULL){
-    fprintf(stderr,"\n\t## Error: please supply only 1 input data file using -gbeagle\n");
+  }else if(ca.glbeaglefile!=NULL&&ca.vcffile!=NULL){
+    fprintf(stderr,"\n\t## Error: please supply only 1 input data file using -gbeagle -B\n");
     stop=true;
   }
-  if(ca.freqfile==NULL){
+  if(ca.freqfile==NULL&&ca.vcffile==NULL){
     fprintf(stderr,"\n\t## Error: please supply both a genotype likelihood file and a frequency file\n");
     stop=true;
   }
-  if(ca.nInd<1){
+  if(ca.nInd<1&&ca.vcffile==NULL){
     fprintf(stderr,"\n\t## Error: number of individuals in the beagle file needs to be specified and it has to be positive\n");
     exit(0);;
   }
@@ -209,13 +223,15 @@ int main(int argc, char **argv){
     fprintf(stderr,"\n\t## Error: the specified -a value cannot be negative\n");
     stop=true;
   }
-  if((ca.p.pair[0]>(ca.nInd-1))){
-    fprintf(stderr,"\n\t## Error: the specified -a value is incompatible with the number of individuals specified\n");
-    stop=true;
-  }
-  if((ca.p.pair[1]>(ca.nInd-1))){
-    fprintf(stderr,"\n\t## Error: the specified -b value is incompatible with the number of individuals specified\n");
-    stop=true;
+  if(ca.vcffile==NULL){
+    if((ca.p.pair[0]>(ca.nInd-1))){
+      fprintf(stderr,"\n\t## Error: the specified -a value is incompatible with the number of individuals specified\n");
+      stop=true;
+    }
+    if((ca.p.pair[1]>(ca.nInd-1))){
+      fprintf(stderr,"\n\t## Error: the specified -b value is incompatible with the number of individuals specified\n");
+      stop=true;
+    }
   }
   if(ca.p.pair[1]<0){
     fprintf(stderr,"\n\t## Error: the specified -b value cannot be negative\n");
@@ -291,17 +307,18 @@ int main(int argc, char **argv){
     exit(0);
   
 
-  // Read in freqs
-  std::vector<double> freq;
-  int nSitesInFreqfile = readFrequencyFile(ca.freqfile,freq);
-  if((nColInFile(ca.freqfile)!=1)){
-    fprintf(stderr, "\n\t## Error: there is more than one column (%d) in frequency file: %s\n", nColInFile(ca.freqfile), ca.freqfile);
-    exit(0);
-  }
-  
+ 
   // Read in gls
   std::vector<perChr> pd;
   if(ca.glbeaglefile!=NULL){
+    // Read in freqs
+    std::vector<double> freq;
+    int nSitesInFreqfile = readFrequencyFile(ca.freqfile,freq);
+    if((nColInFile(ca.freqfile)!=1)){
+      fprintf(stderr, "\n\t## Error: there is more than one column (%d) in frequency file: %s\n", nColInFile(ca.freqfile), ca.freqfile);
+      exit(0);
+    }
+  
     bgl d=readBeagle(ca.glbeaglefile);
     if(d.nSites!=nSitesInFreqfile){
       fprintf(stderr,"\n\t## Error: The number of sites in the beagle file does not fit with number of sites in freqfile: %d vs. %d\n",d.nSites,nSitesInFreqfile);
@@ -312,7 +329,13 @@ int main(int argc, char **argv){
       exit(0);
     }
     pd = makeDat(d,freq,ca.minMaf,ca.switchMaf);
-  }else{
+  }else if(ca.vcffile!=NULL){
+    pd = readbcfvcf_bgl(ca.vcffile,0,ca.minMaf,ca.vcf_format_field,ca.vcf_allele_field,NULL,ca.switchMaf);
+
+  }
+
+
+  else{
     printf("\n\t## Error the -g (using binary glf files) is not implemented yet\n");
     exit(0);
   }
@@ -400,27 +423,6 @@ int main(int argc, char **argv){
     fprintf(stderr,"\t   %s\n",dumpedFiles[i]);
     free(dumpedFiles[i]);
   }
-
-
-  
-
-  /*
-  for(int j=0;j<pd.size();j++){
-    fprintf(stderr,"Info about chr %s\n",pd[j].name);
-    for(int i=0;i<pd[j].nSites;i++){
-      fprintf(stderr,"freq: %f 1-freq:%f pos: %d\n",
-	      exp(pd[j].logfreq[i]),exp(pd[j].logqerf[i]),pd[j].pos[i]);
-    }
-  }
-  */
-  
-
-  // Get rid of sites with keep==0?
-  
-  //delete [] freq ;
-  
-  
   
   return 0;
-      
 }

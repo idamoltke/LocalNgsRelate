@@ -93,13 +93,9 @@ size_t readFrequencyFile(const char *fname,std::vector<double> &ret) {
 
 bgl readBeagle(const char* fname) {
   const char *delims = "\t \n";
-  char *suffix = strdup(".beagle.gz");
-  char *fullfname = new char[strlen(fname)+strlen(suffix)+1];
-  strcpy(fullfname,fname);
-  strncat(fullfname,suffix,strlen(suffix));
   gzFile fp = NULL;
-  if(Z_NULL==(fp=gzopen(fullfname,"r"))){
-    fprintf(stderr,"\n\t## Error: problem opening the file %s\n",fullfname);
+  if(Z_NULL==(fp=gzopen(fname,"r"))){
+    fprintf(stderr,"\n\t## Error: problem opening the file %s\n",fname);
     exit(0);
   }
   
@@ -160,7 +156,7 @@ bgl readBeagle(const char* fname) {
   }
   
   fprintf(stderr, "\t-> Beagle file \'%s\' successfully parsed.\n\t   It contained data from  %d individuals at %d sites.\n",
-	  fullfname,ret.nInd,ret.nSites);
+	  fname,ret.nInd,ret.nSites);
 
   gzclose(fp); //clean up filepointer
   return ret;
@@ -197,7 +193,9 @@ gzFile openFileGz(const char* a,const char* b,const char *mode,std::vector<char 
 }
 
 FILE *openFile(const char* a,const char* b,std::vector<char *>& dumpedFiles){
-  if(0)
+  assert(a);
+  assert(b);
+  if(1)
     fprintf(stderr,"[%s] %s %s",__FUNCTION__,a,b);
   char *c = new char[strlen(a)+strlen(b)+1];
   strcpy(c,a);
