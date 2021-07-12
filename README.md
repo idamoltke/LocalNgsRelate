@@ -78,7 +78,7 @@ If you - as shown in the run examples below - run the program with “2>&1 | tee
 ## Run examples
 
 ### Making input data
-NB We describe how the data in the folder exampledata was made as an example of how input data to LocalNgsRelate can be made. Running the commands your self will take som time so feel free to skip that and simply jump to the description of how to run LocalNgsRelate below.
+Below we describe how the data in the folder exampledata was made as an example of how input data to LocalNgsRelate can be made. Running the commands yourself will take some time, so feel free to skip that and simply jump to the description of how to run LocalNgsRelate below.
 
 To make the example input files in exampldata we first downloaded bamfiles for 101 LWK samples sequenced to about 6x from here:
 
@@ -110,7 +110,7 @@ zcat LWK.mafs.gz | cut -f5 |sed 1d > LWK.freq
 
 
 ###	Analysing selected pairs
-Let’s here try to infer IBD tracks for the 5 pairs of individuals in the example dataset mentioned above (in . We can do this from the command line by first creating a folder for the results where you want it on you compute and moving into this folder:
+Let’s now try to infer IBD tracks for the 5 pairs of individuals in the example dataset mentioned above (in . We can do this from the command line by first creating a folder for the results where you want it on you compute and moving into this folder:
 
 ```
 mkdir exampleruns
