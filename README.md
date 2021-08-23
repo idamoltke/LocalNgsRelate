@@ -80,7 +80,7 @@ If you - as shown in the run examples below - run the program with “2>&1 | tee
 ### Making input data
 Below we describe how the data in the folder exampledata was made as an example of how input data to LocalNgsRelate can be made. Running the commands yourself will take some time, so feel free to skip that and simply jump to the description of how to run LocalNgsRelate below.
 
-To make the example input files in exampldata we first downloaded bamfiles for 101 LWK samples sequenced to about 6x from here:
+To make the example input files in exampledata we first downloaded bamfiles for 101 LWK samples sequenced to about 6x from here:
 
 ```
 ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase3/data/
@@ -108,6 +108,11 @@ The above command will create a file LWK.beagle.gz and a file LWK.mafs.gz. The f
 zcat LWK.mafs.gz | cut -f5 |sed 1d > LWK.freq
 ```
 
+NB. To make things as simple and easy to follow as possible we here simply assumed that the set of SNP sites to include in the analysis was already available (in the files LWK.sites and LWK.chr). However note that LocalNgsRelate is built on an assumption that there is no linkage disequilibrium (LD) in the data. In practice this means the sites have to be pruned for LD. The this can be tricky to do as LD estimation from low-depth NGS data is not trivial to do. In the paper describing LocalNgsRelate we therefore explored a simple scheme for pruning simply based on SNP distance which worked fairly well and seemed fairly robust to the choice of distance. Specifically, we used the following PLINK command to thin down to 1 SNP every 20kb :
+
+plink -tfile LWK --geno 0.3 --bp-space 20000 --make-just-bim --out LWK.thin
+
+Note that the optimal distance may differ between population since LD patterns do. As a rule of thumb one needs to prune more on populations with more LD (so e.g. in humans one needs to prune less in African populations than in other populations).
 
 ###	Analysing selected pairs
 Let’s now try to infer IBD tracks for the 5 pairs of individuals in the example dataset mentioned above (in . We can do this from the command line by first creating a folder for the results where you want it on you compute and moving into this folder:
@@ -139,7 +144,7 @@ $localngsrelatefolder/src/cpp/localngsrelate -a 0 -b 2 -gbeagle $localngsrelatef
 $localngsrelatefolder/src/cpp/localngsrelate -a 3 -b 4 -gbeagle $localngsrelatefolder/exampledata/LWK -f $localngsrelatefolder/exampledata/LWK.freq -n 7 -O exampleoutput_ind3_ind4 2>&1 | tee exampleoutput_ind3_ind4.fulllog
 ```
 
-Note that we here specify the prefix of the input genotype likelihood file with the option –gbeagle, the full name of the frequency file with the option –f, the number of individuals in the genotype likelihood file with the option –n and the output name prefix with the option –O. Also, note that we are here running the program with default values except for in the first 4 runs, where we set the option -fixk2to0 1 since we only expect k2 to be above 0 for full siblings or twins. Finally, note that we have ended each command line with “2>&1 | tee exampleoutput_indx_indy.fulllog” where x and y are the indices of the analysed individuals. This produces a long log file which can be used to assess convergence (for details on how, see below).
+Note that we here specify the prefix of the input genotype likelihood file with the option –gbeagle, the full name of the frequency file with the option –f, the number of individuals in the genotype likelihood file with the option –n and the output name prefix with the option –O. Also, note that we are here running the program with default values except for in the first 4 runs, where we set the option -fixk2to0 1 since we only expect k2 to be above 0 for full siblings or twins. If you are in doubt about whether to fox k2 to 0 you can always run NgsRelate to check first (http://www.popgen.dk/software/index.php/NgsRelate). Finally, note that we have ended each command line with “2>&1 | tee exampleoutput_indx_indy.fulllog” where x and y are the indices of the analysed individuals. This produces a long log file which can be used to assess convergence (for details on how, see below).
 
 
 ### Assessing convergence
