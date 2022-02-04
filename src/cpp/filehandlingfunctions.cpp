@@ -11,7 +11,7 @@
 #include "analysisfunctions.h"
 #include "filehandlingfunctions.h"
 
-#define LENS  4096
+#define LENS  16384
 
 
 int SIG_COND =1;//if we catch signal then quit program nicely
