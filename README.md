@@ -28,7 +28,10 @@ Or from a different folder with full path, e.g.:
 
 ## Input file format
 ### Formal description
-LocalNgsRelate takes two files as input: a file with genotype likelihoods (-gbeagle) and a file with population allele frequencies (-f) for the sites there are genotype likelihoods for. The genotype likelihood file needs to contain a line for each site with 3 values for each individual (one log transformed genotype likelihood for each of the 3 possible genotypes encoded as 'double's) and it needs to be in beagle format and gz compressed (see e.g. http://www.popgen.dk/angsd/index.php/Beagle_input). 
+LocalNgsRelate takes two files as input: a file with genotype likelihoods (-gbeagle) and a file with population allele frequencies (-f) for the sites there are genotype likelihoods for. 
+
+The genotype likelihood file needs to contain a line for each site with 3 values for each individual (one log transformed genotype likelihood for each of the 3 possible genotypes encoded as 'double's) and it needs to be in beagle format and gz compressed (see e.g. http://www.popgen.dk/angsd/index.php/Beagle_input). Note that the marker name needs to be of the form chromosome name underscore position, so e.g. 1_723918. The reason for this is that the programs needs to know which markes are on the same chromosome and the position of each marker.
+
 The frequency file needs to contain a line per site with the allele frequency of the site in it. 
 For examples of the two types of input files see the files in the folder exampledata which are described below.
 
