@@ -684,7 +684,7 @@ std::vector<perChr> makeDat(const bgl& in,std::vector<double>& freq,double minfr
   int keepcnt = 0;
   int totalkeep = 0;
 
-  if((freq[0]>minfreq)&&(freq[0]>(minfreq-1))){
+  if((freq[0]>minfreq)&&((1-freq[0])>minfreq)){
     keepcnt++;
   }
   for(int i=1;i<in.nSites;i++){
@@ -694,7 +694,7 @@ std::vector<perChr> makeDat(const bgl& in,std::vector<double>& freq,double minfr
       keepcnts.push_back(keepcnt);
       keepcnt=0;
     }
-    if((freq[i]>minfreq)&&(1-freq[i])>minfreq){
+    if((freq[i]>minfreq)&&((1-freq[i])>minfreq)){
       keepcnt++;
     }
 
