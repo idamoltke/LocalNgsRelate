@@ -233,5 +233,5 @@ http://popgen.dk/ida/LocalNgsRelate/exampleoutput_ind2_ind3_posteriorandviterbi_
 ## Citing and references
 For questions contact: ida@binf.ku.dk
 
-If you use the program in a publication please cite: xxx
+If you use the program in a publication please cite: Severson et al. 2022 (https://doi.org/10.1093/bioinformatics/btab732)
 
